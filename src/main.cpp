@@ -51,6 +51,12 @@ void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods
 		case GLFW_KEY_P:
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			break;
+		case GLFW_KEY_F:
+			dist_zoom *= 0.9;
+			break;
+		case GLFW_KEY_D:
+			dist_zoom *= 1.1;
+			break;
 		}
 	}
 }
