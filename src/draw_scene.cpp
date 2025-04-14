@@ -11,10 +11,66 @@ GLBI_Engine myEngine;
 GLBI_Set_Of_Points frame(3);
 GLBI_Convex_2D_Shape grid{3};
 GLBI_Convex_2D_Shape disc{3};
-GLBI_Convex_2D_Shape curved_rail{3};
+GLBI_Convex_2D_Shape curved_rail_int{3};
+GLBI_Convex_2D_Shape curved_rail_ext{3};
 IndexedMesh* cube;
 IndexedMesh* cylinder;
 
+void computeCurve(const Vector3D & a0, const Vector3D & a1, const Vector3D & a2,
+				  const Vector3D & b0, const Vector3D & b1, const Vector3D & b2, 
+				  std::vector<float>& points, bool reverse) {
+	auto nb_points = 50;
+	Vector3D b0_1, b1_1, a0_1, a1_1;
+	Vector3D b0_2, a0_2;
+	float t;
+	for (auto i = 0; i <= nb_points; i++) {
+		t = (float) i / nb_points;
+		if (reverse) {
+			t = (1 - t);
+		}
+		b0_1 = b0 * (1 - t) + b1 * t;
+		b1_1 = b1 * (1 - t) + b2 * t;
+		b0_2 = b0_1 * (1 - t) + b1_1 * t;
+		points.emplace_back(b0_2[0]);
+		points.emplace_back(b0_2[1]);
+		points.emplace_back(b0_2[2]);
+
+		a0_1 = a0 * (1 - t) + a1 * t;
+		a1_1 = a1 * (1 - t) + a2 * t;
+		a0_2 = a0_1 * (1 - t) + a1_1 * t;
+		points.emplace_back(a0_2[0]);
+		points.emplace_back(a0_2[1]);
+		points.emplace_back(a0_2[2]);
+	}
+}
+
+void initCurvedRail(float size, GLBI_Convex_2D_Shape& shape) {
+	std::vector<float> points;
+
+	auto a0 = Vector3D(0., size, 0.);
+	auto a1 = Vector3D(size, size, 0.);
+	auto a2 = Vector3D(size, 0., 0.);
+
+	auto b0 = Vector3D(0., size + sr , 0);
+	auto b1 = Vector3D(size + sr , size + sr , 0);
+	auto b2 = Vector3D(size + sr , 0., 0);
+
+	auto c0 = Vector3D(0., size + sr , sr);
+	auto c1 = Vector3D(size + sr , size + sr , sr);
+	auto c2 = Vector3D(size + sr , 0., sr);
+
+	auto d0 = Vector3D(0., size, sr);
+	auto d1 = Vector3D(size, size, sr);
+	auto d2 = Vector3D(size, 0., sr);
+
+	computeCurve(a0, a1, a2, b0, b1, b2, points, false);
+	computeCurve(b0, b1, b2, c0, c1, c2, points, true);
+	computeCurve(c0, c1, c2, d0, d1, d2, points, false);
+	computeCurve(d0, d1, d2, a0, a1, a2, points, true);
+	
+	shape.initShape(points);
+	shape.changeNature(GL_TRIANGLE_STRIP);
+}
 
 void initScene() {
 	// Square base
@@ -53,7 +109,7 @@ void initScene() {
 		discPoints.push_back(0.);
 	}
 	disc.initShape(discPoints);
-	disc.changeNature(GL_TRIANGLE_FAN);
+	// disc.changeNature(GL_TRIANGLE_STRIP_ADJACENCY);
 
 
 	// Cube
@@ -63,6 +119,9 @@ void initScene() {
 	// Cylinder
 	cylinder = basicCylinder(1., 1.);
 	cylinder->createVAO();
+
+	initCurvedRail(3., curved_rail_int);
+	initCurvedRail(7., curved_rail_ext);
 
 }
 
@@ -127,13 +186,33 @@ void drawStraightTrack() {
 		drawRail();
 	myEngine.mvMatrixStack.popMatrix();
 	myEngine.mvMatrixStack.pushMatrix();
-		myEngine.mvMatrixStack.addTranslation(Vector3D(POS_X_RAIL2, 0., 2 * rr));
+		myEngine.mvMatrixStack.addTranslation(Vector3D(POS_X_RAIL2 - sr, 0., 2 * rr));
 		drawRail();
 	myEngine.mvMatrixStack.popMatrix();
 }
 
 void drawFrame() {
 	frame.drawSet();
+}
+
+void drawCurvedTrack() {
+	std::vector<float> balasts_rotation = {M_PI / 12, M_PI / 4, 5 * M_PI / 12};
+
+	for (auto i = 0; i < 3; i++) {
+		myEngine.mvMatrixStack.pushMatrix();
+			myEngine.mvMatrixStack.addRotation(balasts_rotation[i], Vector3D(0., 0., 1.));
+			myEngine.mvMatrixStack.addTranslation(Vector3D(POS_X_BALAST1, 0., 0.));
+			drawBalast();
+		myEngine.mvMatrixStack.popMatrix();
+	}
+	myEngine.mvMatrixStack.pushMatrix();
+		myEngine.setFlatColor(140. / 255, 140. / 255., 140. / 255.);
+		myEngine.mvMatrixStack.addTranslation(Vector3D(0., 0., 2 * rr));
+		myEngine.updateMvMatrix();
+		curved_rail_int.drawShape();
+		curved_rail_ext.drawShape();
+	myEngine.mvMatrixStack.popMatrix();
+
 }
 
 
@@ -143,7 +222,9 @@ void drawScene() {
 	drawFrame();
 	drawGrid();
 
-	drawStraightTrack();
+	drawCurvedTrack();
+
+	// drawStraightTrack();
 }
 
 
