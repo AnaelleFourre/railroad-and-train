@@ -5,8 +5,12 @@
 #include "glbasimac/glbi_set_of_points.hpp"
 #include "glbasimac/glbi_convex_2D_shape.hpp"
 #include "tools/shaders.hpp"
-#include <iostream>
 #include "draw_scene.hpp"
+#include "grid.hpp"
+
+#include <iostream>
+#include <fstream>
+
 
 using namespace glbasimac;
 using namespace STP3D;
@@ -63,6 +67,13 @@ void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods
 
 int main(int /*argc*/, char ** /*argv*/)
 {
+
+    std::ifstream i("../grids/grid1.json");
+
+    auto j = json::parse(i);
+    auto grid = j.template get<Grid>();
+	
+
 	/* GLFW initialisation */
 	GLFWwindow *window;
 	if (!glfwInit())
@@ -124,7 +135,7 @@ int main(int /*argc*/, char ** /*argv*/)
 		myEngine.setViewMatrix(viewMatrix);
 		myEngine.updateMvMatrix();
 
-		drawScene();
+		drawScene(grid);
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
