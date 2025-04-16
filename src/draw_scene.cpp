@@ -1,5 +1,6 @@
 #include "draw_scene.hpp"
 #include "draw_tracks.hpp"
+#include "draw_station.hpp"
 #include "grid.hpp"
 
 /// Camera parameters
@@ -12,6 +13,7 @@ int grid_size {10};
 GLBI_Engine myEngine;
 GLBI_Set_Of_Points frame(3);
 GLBI_Convex_2D_Shape grid{3};
+IndexedMesh* cube;
 
 void initScene() {
 	// Square base
@@ -40,7 +42,13 @@ void initScene() {
 	frame.initSet(framePoints, frameColors);
 	frame.changeNature(GL_LINES);
 
+	
+	// Cube
+	cube = basicCube();
+	cube->createVAO();
+
 	initTracks();
+	initStation();
 
 }
 
@@ -70,9 +78,7 @@ void drawScene(const Grid& grid) {
 	drawGrid();
 
 	drawTracksFromPath(grid);
-
-	// drawCurvedTrack();
-	// drawStraightTrack();
+	drawStation(grid.origin[0], grid.origin[1]);
 }
 
 

@@ -6,7 +6,6 @@
 GLBI_Convex_2D_Shape curved_rail_int{3};
 GLBI_Convex_2D_Shape curved_rail_ext{3};
 GLBI_Convex_2D_Shape disc{3};
-IndexedMesh* cube;
 IndexedMesh* cylinder;
 
 
@@ -82,11 +81,6 @@ void initTracks() {
 	}
 	disc.initShape(discPoints);
 	// disc.changeNature(GL_TRIANGLE_STRIP_ADJACENCY);
-
-
-	// Straight Rail
-	cube = basicCube();
-	cube->createVAO();
 
 	// Balast
 	cylinder = basicCylinder(1., 1.);

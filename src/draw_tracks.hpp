@@ -20,6 +20,7 @@ static const float sx {(10. - 10 * rr) / 10.};
 
 /* OpenGL Engine */
 extern GLBI_Engine myEngine;
+extern IndexedMesh* cube;
 
 void initTracks();
 
