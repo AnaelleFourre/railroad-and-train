@@ -9,11 +9,6 @@
 
 using namespace glbasimac;
 
-
-/* OpenGL Engine */
-extern GLBI_Engine myEngine;
-extern IndexedMesh* cube;
-
 void initStation();
 
 void drawStation(int pos_x, int pos_y);

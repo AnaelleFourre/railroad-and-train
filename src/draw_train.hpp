@@ -9,6 +9,6 @@
 
 using namespace glbasimac;
 
-void initTracks();
+void initTrain();
 
-void drawTracksFromPath(const Grid& grid);
+void drawTrain(int pos_x, int pos_y);

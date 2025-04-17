@@ -1,6 +1,7 @@
 #include "draw_scene.hpp"
 #include "draw_tracks.hpp"
 #include "draw_station.hpp"
+#include "draw_train.hpp"
 #include "grid.hpp"
 
 /// Camera parameters
@@ -13,7 +14,10 @@ int grid_size {10};
 GLBI_Engine myEngine;
 GLBI_Set_Of_Points frame(3);
 GLBI_Convex_2D_Shape grid{3};
+GLBI_Convex_2D_Shape disc{3};
+GLBI_Convex_2D_Shape roof{3};
 IndexedMesh* cube;
+IndexedMesh* cylinder;
 
 void initScene() {
 	// Square base
@@ -42,13 +46,48 @@ void initScene() {
 	frame.initSet(framePoints, frameColors);
 	frame.changeNature(GL_LINES);
 
+	// Disc
+	std::vector<float> discPoints;
+	float angle;
+	for (auto i = 0; i < 360; i++) {
+		angle = M_PI * i / 180;
+		discPoints.push_back(cos(angle));
+		discPoints.push_back(sin(angle));
+		discPoints.push_back(0.);
+	}
+	disc.initShape(discPoints);
+	disc.changeNature(GL_TRIANGLE_FAN);
+
+	// Roof
+	std::vector<float> cr_points = {
+		1., 0., 0., // 1, 7
+		1., 0.5, 1., // 2, 6
+		1., 1., 0., // 3
+		0., 1., 0., // 4, 10
+		0., 0.5, 1., // 5, 9
+		1., 0.5, 1., // 2, 6
+		1., 0., 0., // 1, 7
+		0., 0., 0., // 8
+		0., 0.5, 1., // 5, 9
+		0., 1., 0., // 4, 10
+	};
+	roof.initShape(cr_points);
+	roof.changeNature(GL_TRIANGLE_STRIP);
+
 	
 	// Cube
 	cube = basicCube();
 	cube->createVAO();
 
+	
+	// Cylinder
+	cylinder = basicCylinder(1., 1.);
+	cylinder->createVAO();
+
+
 	initTracks();
 	initStation();
+	initTrain();
 
 }
 
@@ -79,6 +118,7 @@ void drawScene(const Grid& grid) {
 
 	drawTracksFromPath(grid);
 	drawStation(grid.origin[0], grid.origin[1]);
+	drawTrain(grid.path[0][0], grid.path[0][1]);
 }
 
 

@@ -5,8 +5,6 @@
 
 GLBI_Convex_2D_Shape curved_rail_int{3};
 GLBI_Convex_2D_Shape curved_rail_ext{3};
-GLBI_Convex_2D_Shape disc{3};
-IndexedMesh* cylinder;
 
 
 void computeCurve(const Vector3D & a0, const Vector3D & a1, const Vector3D & a2,
@@ -70,22 +68,6 @@ void initCurvedRail(float size, GLBI_Convex_2D_Shape& shape) {
 
 void initTracks() {
     
-	// Disc
-	std::vector<float> discPoints;
-	float angle;
-	for (auto i = 0; i < 360; i++) {
-		angle = M_PI * i / 180;
-		discPoints.push_back(cos(angle));
-		discPoints.push_back(sin(angle));
-		discPoints.push_back(0.);
-	}
-	disc.initShape(discPoints);
-	// disc.changeNature(GL_TRIANGLE_STRIP_ADJACENCY);
-
-	// Balast
-	cylinder = basicCylinder(1., 1.);
-	cylinder->createVAO();
-
     // Curved Rail
 	initCurvedRail(POS_X_RAIL1, curved_rail_int);
 	initCurvedRail(POS_X_RAIL2 - sr, curved_rail_ext);
@@ -107,7 +89,7 @@ void drawBalast() {
 		myEngine.mvMatrixStack.addHomothety(Vector3D(6., rr, rr));
 		myEngine.mvMatrixStack.addTranslation(Vector3D(0., 1., 1.));
 		myEngine.mvMatrixStack.pushMatrix();
-			myEngine.mvMatrixStack.addRotation(M_PI / 2, Vector3D(0., 1., 0.));
+			myEngine.mvMatrixStack.addRotation(M_PI_2, Vector3D(0., 1., 0.));
 			myEngine.updateMvMatrix();
 			disc.drawShape(); 
 			myEngine.mvMatrixStack.pushMatrix();
@@ -117,7 +99,7 @@ void drawBalast() {
 			myEngine.mvMatrixStack.popMatrix();
 		myEngine.mvMatrixStack.popMatrix(); 
 		myEngine.mvMatrixStack.pushMatrix();
-			myEngine.mvMatrixStack.addRotation(3 * M_PI / 2, Vector3D(0., 0., 1.));
+			myEngine.mvMatrixStack.addRotation(3 * M_PI_2, Vector3D(0., 0., 1.));
 			myEngine.updateMvMatrix();
 			cylinder->draw();
 		myEngine.mvMatrixStack.popMatrix();
