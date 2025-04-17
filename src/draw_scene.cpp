@@ -13,6 +13,7 @@ GLBI_Convex_2D_Shape disc{3};
 GLBI_Convex_2D_Shape roof{3};
 IndexedMesh* cube;
 IndexedMesh* cylinder;
+IndexedMesh* light;
 
 void initScene() {
 	// Square base
@@ -78,6 +79,10 @@ void initScene() {
 	// Cylinder
 	cylinder = basicCylinder(1., 1.);
 	cylinder->createVAO();
+
+	// Light
+	light = basicSphere(1.);
+	light->createVAO();
 
 
 	initTracks();

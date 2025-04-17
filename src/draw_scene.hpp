@@ -34,6 +34,7 @@ extern IndexedMesh* cube;
 extern IndexedMesh* cylinder;
 extern GLBI_Convex_2D_Shape disc;
 extern GLBI_Convex_2D_Shape roof;
+extern IndexedMesh* light;
 
 void initScene();
 void drawScene(const Grid& grid);

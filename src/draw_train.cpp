@@ -126,11 +126,11 @@ void drawStructure() {
             drawBottomStructure();
         myEngine.mvMatrixStack.popMatrix();
         myEngine.mvMatrixStack.pushMatrix();
-            myEngine.mvMatrixStack.addTranslation(Vector3D(4.5, 8., 7 - 2 * sr));
+            myEngine.mvMatrixStack.addTranslation(Vector3D(5., 8., 7 - 2 * sr));
             drawChimney();
         myEngine.mvMatrixStack.popMatrix();
         myEngine.mvMatrixStack.pushMatrix();
-            myEngine.mvMatrixStack.addTranslation(Vector3D(2.5, -1., 8.5));
+            myEngine.mvMatrixStack.addTranslation(Vector3D(2.5, -0.5, 8.5));
             drawTrainRoof();
         myEngine.mvMatrixStack.popMatrix();
     myEngine.mvMatrixStack.popMatrix();
@@ -146,7 +146,7 @@ void drawWheel() {
             drawClosedCylinder();
         myEngine.mvMatrixStack.popMatrix();
 
-        auto nb_bars = 10;
+        auto nb_bars = 15;
         for (auto i = 0; i < nb_bars; i++) {
             myEngine.mvMatrixStack.pushMatrix();
                 myEngine.mvMatrixStack.addRotation(i * (2 * M_PI / nb_bars), Vector3D(0., 0., 1.));
@@ -199,6 +199,24 @@ void drawCowCatcher() {
     myEngine.mvMatrixStack.popMatrix();
 }
 
+void drawLight() {
+    myEngine.mvMatrixStack.pushMatrix();
+        myEngine.mvMatrixStack.addTranslation(Vector3D(5, 10., 5.5 - sr));
+        myEngine.mvMatrixStack.pushMatrix();
+            myEngine.setFlatColor(1., 1., 128. / 255.);
+            myEngine.mvMatrixStack.addHomothety(Vector3D(1, 0.5, 1));
+            myEngine.updateMvMatrix();
+            light->draw();
+        myEngine.mvMatrixStack.popMatrix();
+        myEngine.mvMatrixStack.pushMatrix();
+            myEngine.setFlatColor(0., 0., 0.);
+            myEngine.mvMatrixStack.addRotation(-M_PI_2, Vector3D(1., 0., 0.));
+            myEngine.updateMvMatrix();
+            circle.drawShape();
+        myEngine.mvMatrixStack.popMatrix();
+    myEngine.mvMatrixStack.popMatrix();
+}
+
 void drawTrain(int pos_x, int pos_y){
     
     myEngine.mvMatrixStack.pushMatrix();
@@ -206,6 +224,7 @@ void drawTrain(int pos_x, int pos_y){
         drawStructure();
         drawWheels();
         drawCowCatcher();
+        drawLight();
     myEngine.mvMatrixStack.popMatrix();
 
 }

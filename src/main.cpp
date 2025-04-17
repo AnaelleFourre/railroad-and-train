@@ -16,10 +16,10 @@ using namespace glbasimac;
 using namespace STP3D;
 
 /* Window properties */
-static const unsigned int WINDOW_WIDTH = 800;
+static const unsigned int WINDOW_WIDTH = 1600;
 static const unsigned int WINDOW_HEIGHT = 800;
 static const char WINDOW_TITLE[] = "Railroad and Train";
-static float aspectRatio = 1.0f;
+static float aspectRatio = 2.0f;
 
 /* Minimal time wanted between two images */
 static const double FRAMERATE_IN_SECONDS = 1. / 30.;
