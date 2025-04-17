@@ -12,9 +12,7 @@ using namespace glbasimac;
 /* Camera parameters and functions */
 static const float Z_NEAR {0.1f};
 static const float Z_FAR {500.f};
-extern float angle_theta;      // Angle between x axis and viewpoint
-extern float angle_phy  ;      // Angle between z axis and viewpoint
-extern float dist_zoom  ;      // Distance between origin and viewpoint
+
 
 static const float POS_X_RAIL1 {3.};
 static const float POS_X_RAIL2 {7.};

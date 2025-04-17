@@ -28,6 +28,21 @@ static const double FRAMERATE_IN_SECONDS = 1. / 30.;
 static const float GL_VIEW_SIZE = 200.;
 
 
+/// Camera parameters
+float angle_phy {30.0};      // Angle between z axis and viewpoint
+float camera_x {10.0};
+float camera_y {10.0};
+float camera_z {10.0};
+
+bool move_up = false;
+bool move_down = false;
+bool move_front = false;
+bool move_back = false;
+bool move_right = false;
+bool move_left = false;
+bool turn_left = false;
+bool turn_right = false;
+
 
 /* Error handling function */
 void onError(int error, const char *description)
@@ -56,10 +71,59 @@ void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			break;
 		case GLFW_KEY_F:
-			dist_zoom *= 0.9;
+			move_up = true;
 			break;
 		case GLFW_KEY_D:
-			dist_zoom *= 1.1;
+			move_down = true;
+			break;
+		case GLFW_KEY_UP:
+			move_front = true;
+			break;
+		case GLFW_KEY_DOWN:
+			move_back = true;
+			break;
+		case GLFW_KEY_RIGHT:
+			move_right = true;
+			break;
+		case GLFW_KEY_LEFT:
+			move_left = true;
+			break;
+		case GLFW_KEY_C:
+			turn_left = true;
+			break;
+		case GLFW_KEY_V:
+			turn_right = true;
+			break;
+		}
+	} 
+
+	if (action == GLFW_RELEASE)
+	{
+		switch (key)
+		{
+		case GLFW_KEY_F:
+			move_up = false;
+			break;
+		case GLFW_KEY_D:
+			move_down = false;
+			break;
+		case GLFW_KEY_UP:
+			move_front = false;
+			break;
+		case GLFW_KEY_DOWN:
+			move_back = false;
+			break;
+		case GLFW_KEY_RIGHT:
+			move_right = false;
+			break;
+		case GLFW_KEY_LEFT:
+			move_left = false;
+			break;
+		case GLFW_KEY_C:
+			turn_left = false;
+			break;
+		case GLFW_KEY_V:
+			turn_right = false;
 			break;
 		}
 	}
@@ -125,11 +189,35 @@ int main(int /*argc*/, char ** /*argv*/)
 
 		/* Fix camera position */
 		myEngine.mvMatrixStack.loadIdentity();
+
+		if (move_up)
+			camera_z += 0.5;
+		if (move_down)
+			camera_z -= 0.5;
+		if (move_front){
+			camera_x += cos(deg2rad(angle_phy));
+			camera_y += sin(deg2rad(angle_phy));
+		}
+		if (move_back){
+			camera_x -= cos(deg2rad(angle_phy));
+			camera_y -= sin(deg2rad(angle_phy));
+		}
+		if (move_right){
+			camera_x += cos(deg2rad(angle_phy - 90));
+			camera_y += sin(deg2rad(angle_phy - 90));
+		}
+		if (move_left){
+			camera_x -= cos(deg2rad(angle_phy - 90));
+			camera_y -= sin(deg2rad(angle_phy - 90));
+		}
+		if (turn_left)
+			angle_phy += 2.0;
+		if (turn_right)
+			angle_phy -= 2.0;
+	
 		Vector3D pos_camera =
-			Vector3D(dist_zoom * cos(deg2rad(angle_theta)) * cos(deg2rad(angle_phy)),
-					 dist_zoom * sin(deg2rad(angle_theta)) * cos(deg2rad(angle_phy)),
-					 dist_zoom * sin(deg2rad(angle_phy)));
-		Vector3D viewed_point = Vector3D(0.0, 0.0, 0.0);
+			Vector3D(camera_x, camera_y, camera_z);
+		Vector3D viewed_point = Vector3D(camera_x + cos(deg2rad(angle_phy)), camera_y + sin(deg2rad(angle_phy)), camera_z);
 		Vector3D up_vector = Vector3D(0.0, 0.0, 1.0);
 		Matrix4D viewMatrix = Matrix4D::lookAt(pos_camera, viewed_point, up_vector);
 		myEngine.setViewMatrix(viewMatrix);
