@@ -16,22 +16,20 @@ using namespace glbasimac;
 using namespace STP3D;
 
 /* Window properties */
-static const unsigned int WINDOW_WIDTH = 1600;
+static const unsigned int WINDOW_WIDTH = 1200;
 static const unsigned int WINDOW_HEIGHT = 800;
 static const char WINDOW_TITLE[] = "Railroad and Train";
-static float aspectRatio = 2.0f;
+static float aspectRatio = 1.0f;
 
 /* Minimal time wanted between two images */
 static const double FRAMERATE_IN_SECONDS = 1. / 30.;
 
-/* Virtual windows space */
-static const float GL_VIEW_SIZE = 200.;
 
 
 /// Camera parameters
-float angle_phy {30.0};      // Angle between z axis and viewpoint
-float camera_x {10.0};
-float camera_y {10.0};
+float angle_phy {200.0};      // Angle between z axis and viewpoint
+float camera_x {20.0};
+float camera_y {20.0};
 float camera_z {10.0};
 
 bool move_up = false;
@@ -50,9 +48,13 @@ void onError(int error, const char *description)
 	std::cout << "GLFW Error (" << error << ") : " << description << std::endl;
 }
 
-void onWindowResized(GLFWwindow * /*window*/, int /*width*/, int /*height*/)
+void onWindowResized(GLFWwindow * /*window*/, int width, int height)
 {
-	myEngine.set3DProjection(90.0, aspectRatio, Z_NEAR, Z_FAR);
+	aspectRatio = width / (float) height;
+
+	glViewport(0, 0, width, height);
+	std::cerr<<"Setting 3D projection"<<std::endl;
+	myEngine.set3DProjection(60.0,aspectRatio,Z_NEAR,Z_FAR);
 }
 
 void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods*/)
@@ -174,7 +176,7 @@ int main(int /*argc*/, char ** /*argv*/)
 	onWindowResized(window, WINDOW_WIDTH, WINDOW_HEIGHT);
 	CHECK_GL;
 
-	initScene();
+	initScene(grid);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
@@ -184,6 +186,7 @@ int main(int /*argc*/, char ** /*argv*/)
 		double startTime = glfwGetTime();
 
 		/* Render here */
+		glClearColor(0.f,0.0f,0.2f,0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
 

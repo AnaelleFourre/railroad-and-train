@@ -8,21 +8,21 @@ int grid_size {10};
 
 GLBI_Engine myEngine;
 GLBI_Set_Of_Points frame(3);
-GLBI_Convex_2D_Shape grid{3};
+GLBI_Convex_2D_Shape square{3};
 GLBI_Convex_2D_Shape disc{3};
 GLBI_Convex_2D_Shape roof{3};
 IndexedMesh* cube;
 IndexedMesh* cylinder;
 IndexedMesh* light;
 
-void initScene() {
+void initScene(const Grid& grid) {
 	// Square base
 	std::vector<float> squareBase{0.0,0.0,0.0,	
 		10.0,0.0,0.0,
 		10.0,10.0,0.0,
 			0.0,10.0,0.0};
-	grid.initShape(squareBase);
-	grid.changeNature(GL_TRIANGLE_FAN);
+	square.initShape(squareBase);
+	square.changeNature(GL_TRIANGLE_FAN);
 
 	// Frame
 	std::vector<float> framePoints {10.0, 0.0, 0.0,
@@ -87,18 +87,25 @@ void initScene() {
 
 	initTracks();
 	initStation();
-	initTrain();
+	initTrain(grid.path[0][0], grid.path[0][1]);
+
+	
+	myEngine.switchToPhongShading();
+	myEngine.setLightPosition(Vector4D(10. * grid.path[0][0] + 5., 10. * grid.path[0][1] + 11., 5.5 + 2 * rr, 1.));
+	myEngine.setLightIntensity(Vector3D(100., 100., 50.));
+    myEngine.switchToFlatShading();
 
 }
 
 void drawGrid() {
+
 	for (auto i = 0; i < grid_size; i++) {
 		for (auto j = 0; j < grid_size; j++) {
 			myEngine.setFlatColor(0.2 * ((i + j) % 2 + 1), 0., 0.);
 			myEngine.mvMatrixStack.pushMatrix();
 				myEngine.mvMatrixStack.addTranslation(Vector3D(10. * (i - grid_size / 2), 10. * (j - grid_size / 2), 0.));
 				myEngine.updateMvMatrix();
-				grid.drawShape();
+				square.drawShape();
 			myEngine.mvMatrixStack.popMatrix();
 		}
 	}
@@ -112,13 +119,18 @@ void drawFrame() {
 void drawScene(const Grid& grid) {
 	grid_size = grid.size_grid;
 	glPointSize(10.0);
+
 	
 	drawFrame();
 	drawGrid();
-
+	
+	myEngine.switchToPhongShading();
 	drawTracksFromPath(grid);
+	myEngine.switchToFlatShading();
 	drawStation(grid.origin[0], grid.origin[1]);
 	drawTrain(grid.path[0][0], grid.path[0][1]);
+
+
 }
 
 

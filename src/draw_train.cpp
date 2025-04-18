@@ -21,7 +21,7 @@ void addCircleSide(std::vector<float>& points, float r1, float z1, float r2, flo
 }
 
 
-void initTrain(){
+void initTrain(int pos_x, int pos_y) {
 
     // Circle
     std::vector<float> circlePoints;
@@ -45,6 +45,8 @@ void initTrain(){
 
     cowCatcher.initShape(points);
     cowCatcher.changeNature(GL_TRIANGLE_FAN);
+
+    
 
 }
 
@@ -210,6 +212,7 @@ void drawLight() {
         myEngine.mvMatrixStack.popMatrix();
         myEngine.mvMatrixStack.pushMatrix();
             myEngine.setFlatColor(0., 0., 0.);
+            myEngine.mvMatrixStack.addHomothety(Vector3D(1., 1.5, 1.));
             myEngine.mvMatrixStack.addRotation(-M_PI_2, Vector3D(1., 0., 0.));
             myEngine.updateMvMatrix();
             circle.drawShape();
