@@ -3,13 +3,14 @@
 
 #include "grid.hpp"
 
-GLBI_Convex_2D_Shape curved_rail_int{3};
-GLBI_Convex_2D_Shape curved_rail_ext{3};
+GLBI_Convex_2D_Shape curved_rail_int_top{3};
+GLBI_Convex_2D_Shape curved_rail_ext_top{3};
+GLBI_Convex_2D_Shape curved_rail_side{3};
 
 
 void computeCurve(const Vector3D & a0, const Vector3D & a1, const Vector3D & a2,
     const Vector3D & b0, const Vector3D & b1, const Vector3D & b2, 
-    std::vector<float>& points, bool reverse) {
+    std::vector<float>& points) {
 
     auto nb_points = 50;
     Vector3D b0_1, b1_1, a0_1, a1_1;
@@ -17,9 +18,6 @@ void computeCurve(const Vector3D & a0, const Vector3D & a1, const Vector3D & a2,
     float t;
     for (auto i = 0; i <= nb_points; i++) {
         t = (float) i / nb_points;
-        if (reverse) {
-            t = (1 - t);
-        }
 
         b0_1 = b0 * (1 - t) + b1 * t;
         b1_1 = b1 * (1 - t) + b2 * t;
@@ -37,7 +35,7 @@ void computeCurve(const Vector3D & a0, const Vector3D & a1, const Vector3D & a2,
     }
 }
 
-void initCurvedRail(float size, GLBI_Convex_2D_Shape& shape) {
+void initTopCurvedRail(float size, GLBI_Convex_2D_Shape& shape) {
     std::vector<float> points;
 
     auto a0 = Vector3D(0., size, 0.);
@@ -48,18 +46,24 @@ void initCurvedRail(float size, GLBI_Convex_2D_Shape& shape) {
     auto b1 = Vector3D(size + sr , size + sr , 0);
     auto b2 = Vector3D(size + sr , 0., 0);
 
-    auto c0 = Vector3D(0., size + sr , sr);
-    auto c1 = Vector3D(size + sr , size + sr , sr);
-    auto c2 = Vector3D(size + sr , 0., sr);
+    computeCurve(a0, a1, a2, b0, b1, b2, points);
 
-    auto d0 = Vector3D(0., size, sr);
-    auto d1 = Vector3D(size, size, sr);
-    auto d2 = Vector3D(size, 0., sr);
+    shape.initShape(points);
+    shape.changeNature(GL_TRIANGLE_STRIP);
+}
 
-    computeCurve(a0, a1, a2, b0, b1, b2, points, false);
-    computeCurve(b0, b1, b2, c0, c1, c2, points, true);
-    computeCurve(c0, c1, c2, d0, d1, d2, points, false);
-    computeCurve(d0, d1, d2, a0, a1, a2, points, true);
+void initSideCurvedRail(float size, GLBI_Convex_2D_Shape& shape) {
+    std::vector<float> points;
+
+    auto a0 = Vector3D(0., size, 0.);
+    auto a1 = Vector3D(size, size, 0.);
+    auto a2 = Vector3D(size, 0., 0.);
+
+    auto b0 = Vector3D(0., size, sr);
+    auto b1 = Vector3D(size, size, sr);
+    auto b2 = Vector3D(size, 0., sr);
+
+    computeCurve(a0, a1, a2, b0, b1, b2, points);
 
     shape.initShape(points);
     shape.changeNature(GL_TRIANGLE_STRIP);
@@ -67,10 +71,9 @@ void initCurvedRail(float size, GLBI_Convex_2D_Shape& shape) {
 
 
 void initTracks() {
-    
-    // Curved Rail
-	initCurvedRail(POS_X_RAIL1, curved_rail_int);
-	initCurvedRail(POS_X_RAIL2 - sr, curved_rail_ext);
+    initTopCurvedRail(POS_X_RAIL1, curved_rail_int_top);
+	initTopCurvedRail(POS_X_RAIL2 - sr, curved_rail_ext_top);
+	initSideCurvedRail(1., curved_rail_side);
 }
 
 void drawRail() {
@@ -137,12 +140,52 @@ void drawCurvedTrack() {
 			drawBalast();
 		myEngine.mvMatrixStack.popMatrix();
 	}
+	
 	myEngine.mvMatrixStack.pushMatrix();
 		myEngine.setFlatColor(140. / 255, 140. / 255., 140. / 255.);
 		myEngine.mvMatrixStack.addTranslation(Vector3D(0., 0., 2 * rr));
+
+		myEngine.mvMatrixStack.pushMatrix();
+			myEngine.mvMatrixStack.addTranslation(Vector3D(0., 0., sr));
+			myEngine.updateMvMatrix();
+			myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
+			curved_rail_int_top.drawShape();
+			curved_rail_ext_top.drawShape();
+		myEngine.mvMatrixStack.popMatrix();
+
+		myEngine.mvMatrixStack.pushMatrix();
+			myEngine.mvMatrixStack.addHomothety(Vector3D(POS_X_RAIL1 + sr, POS_X_RAIL1 + sr, 1.));
+			myEngine.updateMvMatrix();
+			myEngine.setNormalForConvex2DShape(Vector3D(1., 1., 0.));
+			curved_rail_side.drawShape();
+		myEngine.mvMatrixStack.popMatrix();
+
+		myEngine.mvMatrixStack.pushMatrix();
+			myEngine.mvMatrixStack.addHomothety(Vector3D(POS_X_RAIL2, POS_X_RAIL2, 1.));
+			myEngine.updateMvMatrix();
+			myEngine.setNormalForConvex2DShape(Vector3D(1., 1., 0.));
+			curved_rail_side.drawShape();
+		myEngine.mvMatrixStack.popMatrix();
+
+		myEngine.mvMatrixStack.pushMatrix();
+			myEngine.mvMatrixStack.addHomothety(Vector3D(POS_X_RAIL1, POS_X_RAIL1, 1.));
+			myEngine.updateMvMatrix();
+			myEngine.setNormalForConvex2DShape(Vector3D(-1., -1., 0.));
+			curved_rail_side.drawShape();
+		myEngine.mvMatrixStack.popMatrix();
+
+		myEngine.mvMatrixStack.pushMatrix();
+			myEngine.mvMatrixStack.addHomothety(Vector3D(POS_X_RAIL2 - sr, POS_X_RAIL2 - sr, 1.));
+			myEngine.updateMvMatrix();
+			myEngine.setNormalForConvex2DShape(Vector3D(-1., -1., 0.));
+			curved_rail_side.drawShape();
+		myEngine.mvMatrixStack.popMatrix();
+
 		myEngine.updateMvMatrix();
-		curved_rail_int.drawShape();
-		curved_rail_ext.drawShape();
+		myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
+		curved_rail_int_top.drawShape();
+		curved_rail_ext_top.drawShape();
+
 	myEngine.mvMatrixStack.popMatrix();
 }
 

@@ -126,9 +126,9 @@ void drawScene(const Grid& grid) {
 	
 	myEngine.switchToPhongShading();
 	drawTracksFromPath(grid);
-	myEngine.switchToFlatShading();
 	drawStation(grid.origin[0], grid.origin[1]);
 	drawTrain(grid.path[0][0], grid.path[0][1]);
+	myEngine.switchToFlatShading();
 
 
 }
