@@ -89,11 +89,6 @@ void initScene(const Grid& grid) {
 	initStation();
 	initTrain(grid.path[0][0], grid.path[0][1]);
 
-	
-	myEngine.switchToPhongShading();
-	myEngine.setLightPosition(Vector4D(10. * grid.path[0][0] + 5., 10. * grid.path[0][1] + 11., 5.5 + 2 * rr, 1.));
-	myEngine.setLightIntensity(Vector3D(100., 100., 50.));
-    myEngine.switchToFlatShading();
 
 }
 
@@ -125,9 +120,9 @@ void drawScene(const Grid& grid) {
 	drawGrid();
 	
 	myEngine.switchToPhongShading();
-	drawTracksFromPath(grid);
-	drawStation(grid.origin[0], grid.origin[1]);
 	drawTrain(grid.path[0][0], grid.path[0][1]);
+	drawStation(grid.origin[0], grid.origin[1]);
+	drawTracksFromPath(grid);
 	myEngine.switchToFlatShading();
 
 

@@ -189,6 +189,7 @@ int main(int /*argc*/, char ** /*argv*/)
 		glClearColor(0.f,0.0f,0.2f,0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
 
 		/* Fix camera position */
 		myEngine.mvMatrixStack.loadIdentity();
@@ -198,25 +199,25 @@ int main(int /*argc*/, char ** /*argv*/)
 		if (move_down)
 			camera_z -= 0.5;
 		if (move_front){
-			camera_x += cos(deg2rad(angle_phy));
-			camera_y += sin(deg2rad(angle_phy));
+			camera_x += 0.5 * cos(deg2rad(angle_phy));
+			camera_y += 0.5 * sin(deg2rad(angle_phy));
 		}
 		if (move_back){
-			camera_x -= cos(deg2rad(angle_phy));
-			camera_y -= sin(deg2rad(angle_phy));
+			camera_x -= 0.5 * cos(deg2rad(angle_phy));
+			camera_y -= 0.5 * sin(deg2rad(angle_phy));
 		}
 		if (move_right){
-			camera_x += cos(deg2rad(angle_phy - 90));
-			camera_y += sin(deg2rad(angle_phy - 90));
+			camera_x += 0.5 * cos(deg2rad(angle_phy - 90));
+			camera_y += 0.5 * sin(deg2rad(angle_phy - 90));
 		}
 		if (move_left){
-			camera_x -= cos(deg2rad(angle_phy - 90));
-			camera_y -= sin(deg2rad(angle_phy - 90));
+			camera_x -= 0.5 * cos(deg2rad(angle_phy - 90));
+			camera_y -= 0.5 * sin(deg2rad(angle_phy - 90));
 		}
 		if (turn_left)
-			angle_phy += 2.0;
+			angle_phy += 1.0;
 		if (turn_right)
-			angle_phy -= 2.0;
+			angle_phy -= 1.0;
 	
 		Vector3D pos_camera =
 			Vector3D(camera_x, camera_y, camera_z);

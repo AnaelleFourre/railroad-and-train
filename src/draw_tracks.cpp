@@ -94,10 +94,12 @@ void drawBalast() {
 		myEngine.mvMatrixStack.pushMatrix();
 			myEngine.mvMatrixStack.addRotation(M_PI_2, Vector3D(0., 1., 0.));
 			myEngine.updateMvMatrix();
+			myEngine.setNormalForConvex2DShape(Vector3D(0., 0., -1.));
 			disc.drawShape(); 
 			myEngine.mvMatrixStack.pushMatrix();
 				myEngine.mvMatrixStack.addTranslation(Vector3D(0., 0., 1.));
 				myEngine.updateMvMatrix();
+				myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
 				disc.drawShape();
 			myEngine.mvMatrixStack.popMatrix();
 		myEngine.mvMatrixStack.popMatrix(); 
@@ -140,7 +142,7 @@ void drawCurvedTrack() {
 			drawBalast();
 		myEngine.mvMatrixStack.popMatrix();
 	}
-	
+
 	myEngine.mvMatrixStack.pushMatrix();
 		myEngine.setFlatColor(140. / 255, 140. / 255., 140. / 255.);
 		myEngine.mvMatrixStack.addTranslation(Vector3D(0., 0., 2 * rr));
