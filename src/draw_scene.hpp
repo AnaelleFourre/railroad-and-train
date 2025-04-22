@@ -36,6 +36,7 @@ extern GLBI_Convex_2D_Shape disc;
 extern GLBI_Convex_2D_Shape roof;
 extern IndexedMesh* light;
 
+void drawRoof();
 void initScene(const Grid& grid);
 void drawScene(const Grid& grid);
 

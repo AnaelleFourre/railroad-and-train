@@ -8,12 +8,9 @@ void initStation()
 {
     // Side roof
     std::vector<float> sr_points = {
-        1, 1., 0.5,
         0., 0., 0.,
-        0., 2., 0.,
-        4., 2., 0.,
         4., 0., 0.,
-        0., 0., 0.
+        2., 1., 0.5,
     };
     side_roof.initShape(sr_points);
     side_roof.changeNature(GL_TRIANGLE_FAN);
@@ -23,8 +20,38 @@ void initStation()
 void drawCenterRoof() {
     myEngine.mvMatrixStack.pushMatrix();
         myEngine.mvMatrixStack.addHomothety(Vector3D(6., 5., 1.));
+        drawRoof();
+    myEngine.mvMatrixStack.popMatrix();
+}
+
+void drawSideRoof() {
+    myEngine.mvMatrixStack.pushMatrix();
         myEngine.updateMvMatrix();
-        roof.drawShape();
+        myEngine.setNormalForConvex2DShape(Vector3D(0., -1., 2.));
+        side_roof.drawShape();
+    myEngine.mvMatrixStack.popMatrix();
+    myEngine.mvMatrixStack.pushMatrix();
+        myEngine.mvMatrixStack.addTranslation(Vector3D(4., 0., 0.));
+        myEngine.mvMatrixStack.addHomothety(Vector3D(2., 0.5, 1.));
+        myEngine.mvMatrixStack.addRotation(M_PI_2, Vector3D(0., 0., 1.));
+        myEngine.updateMvMatrix();
+        myEngine.setNormalForConvex2DShape(Vector3D(1., 0., 4.));
+        side_roof.drawShape();
+    myEngine.mvMatrixStack.popMatrix();
+    myEngine.mvMatrixStack.pushMatrix();
+        myEngine.mvMatrixStack.addTranslation(Vector3D(4., 2., 0.));
+        myEngine.mvMatrixStack.addRotation(M_PI, Vector3D(0., 0., 1.));
+        myEngine.updateMvMatrix();
+        myEngine.setNormalForConvex2DShape(Vector3D(0., 1., 2.));
+        side_roof.drawShape();
+    myEngine.mvMatrixStack.popMatrix();
+    myEngine.mvMatrixStack.pushMatrix();
+        myEngine.mvMatrixStack.addTranslation(Vector3D(0., 2., 0.));
+        myEngine.mvMatrixStack.addHomothety(Vector3D(2., 0.5, 1.));
+        myEngine.mvMatrixStack.addRotation(-M_PI_2, Vector3D(0., 0., 1.));
+        myEngine.updateMvMatrix();
+        myEngine.setNormalForConvex2DShape(Vector3D(-1., 0., 4.));
+        side_roof.drawShape();
     myEngine.mvMatrixStack.popMatrix();
 }
 
@@ -40,7 +67,7 @@ void drawSideBuilding() {
         myEngine.setFlatColor(51. / 255, 26. / 255., 0.);
         myEngine.mvMatrixStack.addTranslation(Vector3D{0., 0., 3.});
         myEngine.updateMvMatrix();
-        side_roof.drawShape();
+        drawSideRoof();
     myEngine.mvMatrixStack.popMatrix();
 }
 

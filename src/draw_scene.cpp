@@ -10,7 +10,9 @@ GLBI_Engine myEngine;
 GLBI_Set_Of_Points frame(3);
 GLBI_Convex_2D_Shape square{3};
 GLBI_Convex_2D_Shape disc{3};
-GLBI_Convex_2D_Shape roof{3};
+GLBI_Convex_2D_Shape roof_left_top{3};
+GLBI_Convex_2D_Shape roof_right_top{3};
+GLBI_Convex_2D_Shape roofside{3};
 IndexedMesh* cube;
 IndexedMesh* cylinder;
 IndexedMesh* light;
@@ -54,21 +56,34 @@ void initScene(const Grid& grid) {
 	disc.initShape(discPoints);
 	disc.changeNature(GL_TRIANGLE_FAN);
 
-	// Roof
-	std::vector<float> cr_points = {
-		1., 0., 0., // 1, 7
-		1., 0.5, 1., // 2, 6
-		1., 1., 0., // 3
-		0., 1., 0., // 4, 10
-		0., 0.5, 1., // 5, 9
-		1., 0.5, 1., // 2, 6
-		1., 0., 0., // 1, 7
-		0., 0., 0., // 8
-		0., 0.5, 1., // 5, 9
-		0., 1., 0., // 4, 10
+	// Roof left top
+	std::vector<float> roof_top_l_points = {
+		0., 0., 0.,
+		1., 0., 0., 
+		1., 0.5, 1., 
+		0., 0.5, 1.
 	};
-	roof.initShape(cr_points);
-	roof.changeNature(GL_TRIANGLE_STRIP);
+	roof_left_top.initShape(roof_top_l_points);
+	roof_left_top.changeNature(GL_TRIANGLE_FAN);
+
+	// Roof right top
+	std::vector<float> roof_top_r_points = {
+		0., 1., 0.,
+		1., 1., 0., 
+		1., 0.5, 1., 
+		0., 0.5, 1.
+	};
+	roof_right_top.initShape(roof_top_r_points);
+	roof_right_top.changeNature(GL_TRIANGLE_FAN);
+
+	// Roof side
+	std::vector<float> roofside_points = {
+		0., 1., 0., 
+		0., 0.5, 1., 
+		0., 0., 0., 
+	};
+	roofside.initShape(roofside_points);
+	roofside.changeNature(GL_TRIANGLE_FAN);
 
 	
 	// Cube
@@ -88,8 +103,30 @@ void initScene(const Grid& grid) {
 	initTracks();
 	initStation();
 	initTrain(grid.path[0][0], grid.path[0][1]);
+}
 
-
+void drawRoof() {
+	myEngine.mvMatrixStack.pushMatrix();
+		myEngine.updateMvMatrix();
+		myEngine.setNormalForConvex2DShape(Vector3D(0., -1., 0.5));
+		roof_left_top.drawShape();
+	myEngine.mvMatrixStack.popMatrix();
+	myEngine.mvMatrixStack.pushMatrix();
+		myEngine.updateMvMatrix();
+		myEngine.setNormalForConvex2DShape(Vector3D(0., 1., 0.5));
+		roof_right_top.drawShape();
+	myEngine.mvMatrixStack.popMatrix();
+	myEngine.mvMatrixStack.pushMatrix();
+		myEngine.updateMvMatrix();
+		myEngine.setNormalForConvex2DShape(Vector3D(-1., 0., 0.));
+		roofside.drawShape();
+	myEngine.mvMatrixStack.popMatrix();
+	myEngine.mvMatrixStack.pushMatrix();
+		myEngine.mvMatrixStack.addTranslation(Vector3D(1., 0., 0.));
+		myEngine.updateMvMatrix();
+		myEngine.setNormalForConvex2DShape(Vector3D(1., 0., 0.));
+		roofside.drawShape();
+	myEngine.mvMatrixStack.popMatrix();
 }
 
 void drawGrid() {
@@ -114,7 +151,6 @@ void drawFrame() {
 void drawScene(const Grid& grid) {
 	grid_size = grid.size_grid;
 	glPointSize(10.0);
-
 	
 	drawFrame();
 	drawGrid();
