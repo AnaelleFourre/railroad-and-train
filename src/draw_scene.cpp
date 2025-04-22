@@ -131,9 +131,11 @@ void drawRoof() {
 
 void drawGrid() {
 
+	myEngine.setAttenuationFactor(Vector3D(10., 0., 10.));
+	myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
 	for (auto i = 0; i < grid_size; i++) {
 		for (auto j = 0; j < grid_size; j++) {
-			myEngine.setFlatColor(0.2 * ((i + j) % 2 + 1), 0., 0.);
+			myEngine.setFlatColor(10., 10., 10.);
 			myEngine.mvMatrixStack.pushMatrix();
 				myEngine.mvMatrixStack.addTranslation(Vector3D(10. * (i - grid_size / 2), 10. * (j - grid_size / 2), 0.));
 				myEngine.updateMvMatrix();
@@ -141,6 +143,8 @@ void drawGrid() {
 			myEngine.mvMatrixStack.popMatrix();
 		}
 	}
+	myEngine.setAttenuationFactor(Vector3D(1., 0., 1.));
+	
 }
 
 void drawFrame() {
@@ -153,9 +157,9 @@ void drawScene(const Grid& grid) {
 	glPointSize(10.0);
 	
 	drawFrame();
-	drawGrid();
 	
 	myEngine.switchToPhongShading();
+	drawGrid();
 	drawTrain(grid.path[0][0], grid.path[0][1]);
 	drawStation(grid.origin[0], grid.origin[1]);
 	drawTracksFromPath(grid);

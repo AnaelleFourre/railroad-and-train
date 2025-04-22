@@ -46,7 +46,6 @@ void initTrain(int pos_x, int pos_y) {
 	myEngine.switchToPhongShading();
 	myEngine.setLightPosition(Vector4D(10. * pos_x + 5., 10. * pos_y + 10., 5.5 + 2 * rr, 1.));
 	myEngine.setLightIntensity(Vector3D(100., 100., 50.));
-    myEngine.setAttenuationFactor(Vector3D(2.0, 0., 2.));
     myEngine.switchToFlatShading();
 
 }
