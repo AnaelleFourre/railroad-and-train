@@ -44,8 +44,14 @@ void initTrain(int pos_x, int pos_y) {
     
     
 	myEngine.switchToPhongShading();
-	myEngine.setLightPosition(Vector4D(10. * pos_x + 5., 10. * pos_y + 10., 5.5 + 2 * rr, 1.));
-	myEngine.setLightIntensity(Vector3D(100., 100., 50.));
+    // myEngine.addALight(Vector4D(10. * pos_x + 5., 10. * pos_y + 10., 5.5 + 2 * rr, -1.), (Vector3D(100., 100., 50.)));
+	myEngine.setLightPosition(Vector4D(10. * pos_x + 5., 10. * pos_y + 11., 5.5 + 2 * rr, -1.), 0);
+	myEngine.setLightIntensity(Vector3D(200., 200., 100.), 0);
+
+    myEngine.addALight(Vector4D(0., 0., 0., 0.), (Vector3D(0.)));
+    myEngine.setLightPosition(Vector4D(0., 1., 0., 0.), 1);
+	myEngine.setLightIntensity(Vector3D(0.), 1);
+
     myEngine.switchToFlatShading();
 
 }
@@ -122,7 +128,7 @@ void drawStructure() {
     myEngine.mvMatrixStack.popMatrix();
 
     myEngine.mvMatrixStack.pushMatrix();
-        myEngine.setFlatColor(10., 10., 10.);
+        myEngine.setFlatColor(10. / 255., 10. / 255., 10. / 255.);
         myEngine.mvMatrixStack.pushMatrix();
             myEngine.mvMatrixStack.addTranslation(Vector3D(3. + sr, 0., 1.5));
             drawBottomStructure();
@@ -172,7 +178,7 @@ void drawThickCircle(float r, float h, float w) {
 void drawWheel() {
 
     myEngine.mvMatrixStack.pushMatrix();
-        myEngine.setFlatColor(10., 10., 10.);
+        myEngine.setFlatColor(0., 10. / 255., 10. / 255.);
         myEngine.mvMatrixStack.pushMatrix();
             myEngine.mvMatrixStack.addHomothety(Vector3D(0.1, 0.1, 0.1));
             myEngine.mvMatrixStack.addRotation(M_PI_2, Vector3D(1., 0., 0.));
@@ -227,7 +233,7 @@ void drawWheels() {
 
 void drawCowCatcher() {
     myEngine.mvMatrixStack.pushMatrix();
-        myEngine.setFlatColor(10., 10., 10.);
+        myEngine.setFlatColor(0., 10. / 255., 10. / 255.);
         myEngine.updateMvMatrix();
         cowCatcher.drawShape();
     myEngine.mvMatrixStack.popMatrix();
@@ -246,7 +252,7 @@ void drawLight() {
             myEngine.switchToPhongShading();
         myEngine.mvMatrixStack.popMatrix();
         myEngine.mvMatrixStack.pushMatrix();
-            myEngine.setFlatColor(10., 10., 10.);
+            myEngine.setFlatColor(0., 10. / 255., 10. / 255.);
             myEngine.mvMatrixStack.addTranslation(Vector3D(0., -0.25, 0.));
             myEngine.mvMatrixStack.addRotation(-M_PI_2, Vector3D(1., 0., 0.));
             drawThickCircle(1., 0.1, 0.5);

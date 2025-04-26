@@ -103,9 +103,16 @@ void initScene(const Grid& grid) {
 	initTracks();
 	initStation();
 	initTrain(grid.path[0][0], grid.path[0][1]);
+
+	myEngine.switchToPhongShading();
+	myEngine.addALight(Vector4D(0., 0., 0., 0.), (Vector3D(0.)));
+    myEngine.setLightPosition(Vector4D(1.0, 0.0, 1.0, 0.), 2);
+	myEngine.setLightIntensity(Vector3D(0.5, 0.5, 0.5), 2);
+	myEngine.switchToFlatShading();
 }
 
 void drawRoof() {
+	myEngine.setFlatColor(0., 10. / 255., 10. / 255.);
 	myEngine.mvMatrixStack.pushMatrix();
 		myEngine.updateMvMatrix();
 		myEngine.setNormalForConvex2DShape(Vector3D(0., -1., 0.5));
@@ -131,11 +138,11 @@ void drawRoof() {
 
 void drawGrid() {
 
-	myEngine.setAttenuationFactor(Vector3D(10., 0., 10.));
+	myEngine.setAttenuationFactor(Vector3D(0.1, 0., 0.1));
 	myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
 	for (auto i = 0; i < grid_size; i++) {
 		for (auto j = 0; j < grid_size; j++) {
-			myEngine.setFlatColor(10., 10., 10.);
+			myEngine.setFlatColor(0., 10. / 255., 0.);
 			myEngine.mvMatrixStack.pushMatrix();
 				myEngine.mvMatrixStack.addTranslation(Vector3D(10. * (i - grid_size / 2), 10. * (j - grid_size / 2), 0.));
 				myEngine.updateMvMatrix();
@@ -159,13 +166,12 @@ void drawScene(const Grid& grid) {
 	drawFrame();
 	
 	myEngine.switchToPhongShading();
+
 	drawGrid();
 	drawTrain(grid.path[0][0], grid.path[0][1]);
 	drawStation(grid.origin[0], grid.origin[1]);
 	drawTracksFromPath(grid);
 	myEngine.switchToFlatShading();
-
-
 }
 
 

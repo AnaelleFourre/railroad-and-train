@@ -32,18 +32,33 @@ float saturate(float val) {
 	return val;
 }
 
+bool cutoff(float val) {
+	if (val<0.0) return true;
+	return false;
+}
+
 vec4 lambert(int idLight) {
 	// Normal normalization
 	vec3 nml_cam = normalize(nml);
 
 	// Computing vector PL and setting lambert term
 	vec3 dir_illu;
+	vec3 light_to_pos;
+	vec3 original_dir_illu;
+	float light_cutoff;
+	float dp;
+	bool cut;
 	if (lightPos[idLight].w > 0.0) {
 		vec3 ptlight = vec3(viewMatrix*vec4(lightPos[idLight].xyz,1.0f));
 		dir_illu = ptlight - pos;
-	}
-	else {
-		dir_illu = vec3(viewMatrix*lightPos[idLight]);
+	} else if (lightPos[idLight].w == 0.0)  {
+		dir_illu = vec3(viewMatrix*lightPos[idLight]);  
+	} else {
+		vec3 ptlight = vec3(viewMatrix*vec4(lightPos[idLight].xyz,1.0f));
+		dir_illu = ptlight - pos;
+		light_to_pos = -normalize(dir_illu);
+		original_dir_illu = normalize(vec3(viewMatrix*lightPos[idLight + 1]));
+		dp = saturate(dot(light_to_pos, original_dir_illu));
 	}
 	float dist = length(dir_illu);
 	vec3 dir_illu_nml = normalize(dir_illu);
@@ -51,12 +66,17 @@ vec4 lambert(int idLight) {
 
 	vec3 L = lightIntensity[idLight];
 	float attenuation;
-	if (lightPos[idLight].w > 0.0) {
+	if (lightPos[idLight].w != 0.0) {
 		attenuation = 1.0f/(attenuationFactor.x+attenuationFactor.y*dist+attenuationFactor.z*dist*dist);
-	}
-	else {
+	} else {
 		attenuation = attenuationFactor.x;
 	}
+
+
+	if (lightPos[idLight].w < 0.0) {
+		attenuation = attenuation * dp * dp;
+	}
+	
 
 	// Shininess
 	vec3 view_dir = normalize(-pos);
@@ -70,17 +90,19 @@ vec4 lambert(int idLight) {
 	// Final color computation
 	vec4 c_dif;
 	if (use_texture == 1) {
-		c_dif  = texture(tex0,uvs);
+		c_dif = texture(tex0,uvs);
 	}
 	else {
 		c_dif = vec4(color,1.0f);
 	}
+
 	return vec4(c_dif.rgb*(L*attenuation)*cos_illu + spec_intensity*(L*attenuation)*c_spec,1.0);
 }
 
 void main()
 {
 	final_col = vec4(0.0,0.0,0.0,1.0);
+
 	for(int i=0;i<numOfLight;i++) {
 		final_col += lambert(i);
 	}
