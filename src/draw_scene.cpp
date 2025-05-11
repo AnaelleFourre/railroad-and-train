@@ -20,11 +20,13 @@ bool realist_light {false};
 float train_pos_x {0.};
 float train_pos_y {0.};
 float train_angle {0.};
-float move_angle {0.};
-float next_angle {0.};
+int i {0};
+bool corner {false};
+Vector3D corner_begin_pos;
+Vector3D corner_end_pos;
+Vector3D corner_mid_pos;
 int current_path_index {0};
 float train_speed {0.1};
-float angle_speed {0.};
 
 Grid grid;
 
@@ -47,22 +49,47 @@ float getAngle(std::vector<int> a, std::vector<int> b) {
 }
 
 
+Vector3D getTrainPosOnCorner(Vector3D start, Vector3D middle, Vector3D end, int i) {
+
+	auto nb_points = 100;
+	
+	auto t = (float) i / nb_points;
+
+	auto a = start * (1. - t) + middle * t;
+	auto b = middle * (1. - t) + end * t;
+
+	auto m = 100;
+	train_angle = getAngle(std::vector<int>{(int) (m * a.x), (int) (m * a.y)}, std::vector<int>{(int) (m * b.x), (int) (m * b.y)});
+
+	return a * (1 - t) + b * t;
+}
+
+
+
 void initScene(const Grid& g) {
 	grid = g;
-	std::cout << "Init scene" << std::endl;
-	train_pos_x = 10. * grid.path[0][0] + 5.;
-	train_pos_y = 10. * grid.path[0][1] + 5.;
+
 	auto first_angle = getAngle(grid.path[grid.path.size() - 1], grid.path[0]);
 	auto second_angle = getAngle(grid.path[0], grid.path[1]);
+
 	if (first_angle == second_angle) {
+		train_pos_x = 10. * grid.path[0][0] + 5.;
+		train_pos_y = 10. * grid.path[0][1] + 5.;
 		train_angle = first_angle;
-		move_angle = first_angle;
 	} else {
-		train_angle = (first_angle + second_angle) / 2.;
-		angle_speed = (second_angle - first_angle) / 100.;
-		move_angle = second_angle;
+		auto first_vector = Vector3D(grid.path[0][0] - grid.path[-1][0], grid.path[0][1] - grid.path[-1][1], 0);
+		auto second_vector = Vector3D(grid.path[1][0] - grid.path[0][0], grid.path[1][1] - grid.path[0][1], 0);
+
+		corner = true;
+		corner_begin_pos = Vector3D(grid.path[0][0] + 5 - 5 * first_vector.x, grid.path[0][1] + 5 - 5 * first_vector.y, 0.);
+		corner_mid_pos = Vector3D(grid.path[0][0] + 5, grid.path[0][1] + 5, 0.);
+		corner_end_pos = Vector3D(grid.path[0][0] + 5 - 5 * second_vector.x, grid.path[0][1] + 5 - 5 * second_vector.y, 0.);
+		
+		auto new_pos = getTrainPosOnCorner(corner_begin_pos, corner_mid_pos, corner_end_pos, i);
+		train_pos_x = new_pos.x;
+		train_pos_y = new_pos.y;
 	}
-	std::cout << "Angle: " << train_angle << std::endl;
+	i = 50;
 
 	// Square base
 	std::vector<float> squareBase{0.0,0.0,0.0,	
@@ -204,44 +231,43 @@ void drawFrame() {
 void moveTrainAlongPath() {
 	// Determine the new angle according to the path
 	auto n = grid.path.size();
-	auto train_front_x = train_pos_x;
-	auto train_front_y = train_pos_y;
 
-	auto cur_track_x = 10 * grid.path[current_path_index][0];
-	auto cur_track_y = 10 * grid.path[current_path_index][1];
-
-	if (angle_speed != 0. && abs(train_front_x - (cur_track_x + 5.)) < 0.1 && abs(train_front_y - (cur_track_y + 5.)) < 0.1) {
-		move_angle = next_angle;		
-	}
+	auto cur_track_x = 10. * grid.path[current_path_index][0];
+	auto cur_track_y = 10. * grid.path[current_path_index][1];
 
 
-	if (train_front_x < cur_track_x || train_front_x > cur_track_x + 10. || train_front_y < cur_track_y || train_front_y > cur_track_y + 10.) {
-		if (angle_speed != 0.) {
-			train_angle = next_angle;
-			angle_speed = 0.;
+	if (i == 100) {
+		if (corner) {
+			corner = false;
 		}
-		
 		current_path_index = (current_path_index + 1) % n;
+
+		auto new_track_x = 10. * grid.path[current_path_index][0];
+		auto new_track_y = 10. * grid.path[current_path_index][1];
+
+		auto first_vector = Vector3D((new_track_x - cur_track_x) / 10, (new_track_y - cur_track_y) / 10, 0);
+		auto second_vector = Vector3D(grid.path[(current_path_index + 1) % n][0] - new_track_x / 10, grid.path[(current_path_index + 1) % n][1] - new_track_y / 10, 0);
 
 		auto second_angle = getAngle(grid.path[current_path_index], grid.path[(current_path_index + 1) % n]);
 		if (train_angle != second_angle) {
-			angle_speed = (second_angle - train_angle) / 100.;
-			next_angle = second_angle;
+			corner = true;
+			corner_begin_pos = Vector3D(new_track_x + 5 - 5 * first_vector.x, new_track_y + 5 - 5 * first_vector.y, 0.);
+			corner_mid_pos = Vector3D(new_track_x + 5, new_track_y + 5, 0.);
+			corner_end_pos = Vector3D(new_track_x + 5 + 5 * second_vector.x, new_track_y + 5 + 5 * second_vector.y, 0.);
 		}
-		
-		
-		
+		i = 0;
 	}
 
-	// Move the train forward
-	auto move_x = train_speed * sin(move_angle);
-	auto move_y = train_speed * cos(move_angle);
-
-
-	train_pos_x -= move_x;
-	train_pos_y += move_y;
-	train_angle += angle_speed;
+	if (corner) {
+		auto new_pos = getTrainPosOnCorner(corner_begin_pos, corner_mid_pos, corner_end_pos, i);
+		train_pos_x = new_pos.x;
+		train_pos_y = new_pos.y;
+	} else {
+		train_pos_x -= train_speed * sin(train_angle);
+		train_pos_y += train_speed * cos(train_angle);
+	}
 	
+	i++;
 }
 
 
@@ -253,7 +279,6 @@ void drawScene() {
 	if (realist_light) myEngine.switchToPhongShading();
 
 	drawGrid();
-	// angle_speed = 0.1;
 
 	drawTrain(train_pos_x - 5., train_pos_y - 5., train_angle);
 	

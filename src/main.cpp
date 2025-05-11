@@ -40,6 +40,7 @@ bool move_right = false;
 bool move_left = false;
 bool turn_left = false;
 bool turn_right = false;
+bool move_train = false;
 
 
 /* Error handling function */
@@ -98,6 +99,9 @@ void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods
 			break;
 		case GLFW_KEY_R:
 			realist_light = !realist_light;
+			break;
+		case GLFW_KEY_M:
+			move_train = !move_train;
 			break;
 		}
 	} 
@@ -232,7 +236,8 @@ int main(int /*argc*/, char ** /*argv*/)
 
 		drawScene();
 
-		moveTrainAlongPath();
+		if (move_train)
+			moveTrainAlongPath();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

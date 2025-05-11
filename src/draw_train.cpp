@@ -44,8 +44,8 @@ void initTrain(float pos_x, float pos_y) {
     
     
 	myEngine.switchToPhongShading();
-    // myEngine.addALight(Vector4D(10. * pos_x + 5., 10. * pos_y + 10., 5.5 + 2 * rr, -1.), (Vector3D(100., 100., 50.)));
-	myEngine.setLightPosition(Vector4D(10. * pos_x + 5., 10. * pos_y + 11., 5.5 + 2 * rr, -1.), 0);
+
+    myEngine.setLightPosition(Vector4D(10. * pos_x + 5., 10. * pos_y + 11., 5.5 + 2 * rr, -1.), 0);
 	myEngine.setLightIntensity(Vector3D(200., 200., 100.), 0);
 
     myEngine.addALight(Vector4D(0., 0., 0., 0.), (Vector3D(0.)));
