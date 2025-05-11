@@ -43,7 +43,7 @@ void drawCenterRoof() {
 void drawSideRoof() {
     myEngine.mvMatrixStack.pushMatrix();
         myEngine.updateMvMatrix();
-        myEngine.setNormalForConvex2DShape(Vector3D(0., -1., 2.));
+        if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(0., -1., 2.));
         side_roof.drawShape();
     myEngine.mvMatrixStack.popMatrix();
     myEngine.mvMatrixStack.pushMatrix();
@@ -51,14 +51,14 @@ void drawSideRoof() {
         myEngine.mvMatrixStack.addHomothety(Vector3D(2., 0.5, 1.));
         myEngine.mvMatrixStack.addRotation(M_PI_2, Vector3D(0., 0., 1.));
         myEngine.updateMvMatrix();
-        myEngine.setNormalForConvex2DShape(Vector3D(1., 0., 4.));
+        if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(1., 0., 4.));
         side_roof.drawShape();
     myEngine.mvMatrixStack.popMatrix();
     myEngine.mvMatrixStack.pushMatrix();
         myEngine.mvMatrixStack.addTranslation(Vector3D(4., 2., 0.));
         myEngine.mvMatrixStack.addRotation(M_PI, Vector3D(0., 0., 1.));
         myEngine.updateMvMatrix();
-        myEngine.setNormalForConvex2DShape(Vector3D(0., 1., 2.));
+        if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(0., 1., 2.));
         side_roof.drawShape();
     myEngine.mvMatrixStack.popMatrix();
     myEngine.mvMatrixStack.pushMatrix();
@@ -66,7 +66,7 @@ void drawSideRoof() {
         myEngine.mvMatrixStack.addHomothety(Vector3D(2., 0.5, 1.));
         myEngine.mvMatrixStack.addRotation(-M_PI_2, Vector3D(0., 0., 1.));
         myEngine.updateMvMatrix();
-        myEngine.setNormalForConvex2DShape(Vector3D(-1., 0., 4.));
+        if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(-1., 0., 4.));
         side_roof.drawShape();
     myEngine.mvMatrixStack.popMatrix();
 }

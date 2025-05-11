@@ -22,11 +22,7 @@ static const float sr {0.2};
 static const float rr {0.4};
 static const float sx {(10. - 10 * rr) / 10.};
 
-extern int angle_anim_rot_scale;
-
-extern int angle_anim_rot_arm;
-
-extern int angle;
+extern bool realist_light;
 
 /* OpenGL Engine */
 extern GLBI_Engine myEngine;
@@ -38,6 +34,8 @@ extern IndexedMesh* light;
 
 void drawRoof();
 void initScene(const Grid& grid);
-void drawScene(const Grid& grid);
+void drawScene();
+
+void moveTrainAlongPath();
 
 

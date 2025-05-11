@@ -94,12 +94,12 @@ void drawBalast() {
 		myEngine.mvMatrixStack.pushMatrix();
 			myEngine.mvMatrixStack.addRotation(M_PI_2, Vector3D(0., 1., 0.));
 			myEngine.updateMvMatrix();
-			myEngine.setNormalForConvex2DShape(Vector3D(0., 0., -1.));
+			if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(0., 0., -1.));
 			disc.drawShape(); 
 			myEngine.mvMatrixStack.pushMatrix();
 				myEngine.mvMatrixStack.addTranslation(Vector3D(0., 0., 1.));
 				myEngine.updateMvMatrix();
-				myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
+				if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
 				disc.drawShape();
 			myEngine.mvMatrixStack.popMatrix();
 		myEngine.mvMatrixStack.popMatrix(); 
@@ -150,7 +150,7 @@ void drawCurvedTrack() {
 		myEngine.mvMatrixStack.pushMatrix();
 			myEngine.mvMatrixStack.addTranslation(Vector3D(0., 0., sr));
 			myEngine.updateMvMatrix();
-			myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
+			if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
 			curved_rail_int_top.drawShape();
 			curved_rail_ext_top.drawShape();
 		myEngine.mvMatrixStack.popMatrix();
@@ -158,33 +158,33 @@ void drawCurvedTrack() {
 		myEngine.mvMatrixStack.pushMatrix();
 			myEngine.mvMatrixStack.addHomothety(Vector3D(POS_X_RAIL1 + sr, POS_X_RAIL1 + sr, 1.));
 			myEngine.updateMvMatrix();
-			myEngine.setNormalForConvex2DShape(Vector3D(1., 1., 0.));
+			if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(1., 1., 0.));
 			curved_rail_side.drawShape();
 		myEngine.mvMatrixStack.popMatrix();
 
 		myEngine.mvMatrixStack.pushMatrix();
 			myEngine.mvMatrixStack.addHomothety(Vector3D(POS_X_RAIL2, POS_X_RAIL2, 1.));
 			myEngine.updateMvMatrix();
-			myEngine.setNormalForConvex2DShape(Vector3D(1., 1., 0.));
+			if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(1., 1., 0.));
 			curved_rail_side.drawShape();
 		myEngine.mvMatrixStack.popMatrix();
 
 		myEngine.mvMatrixStack.pushMatrix();
 			myEngine.mvMatrixStack.addHomothety(Vector3D(POS_X_RAIL1, POS_X_RAIL1, 1.));
 			myEngine.updateMvMatrix();
-			myEngine.setNormalForConvex2DShape(Vector3D(-1., -1., 0.));
+			if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(-1., -1., 0.));
 			curved_rail_side.drawShape();
 		myEngine.mvMatrixStack.popMatrix();
 
 		myEngine.mvMatrixStack.pushMatrix();
 			myEngine.mvMatrixStack.addHomothety(Vector3D(POS_X_RAIL2 - sr, POS_X_RAIL2 - sr, 1.));
 			myEngine.updateMvMatrix();
-			myEngine.setNormalForConvex2DShape(Vector3D(-1., -1., 0.));
+			if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(-1., -1., 0.));
 			curved_rail_side.drawShape();
 		myEngine.mvMatrixStack.popMatrix();
 
 		myEngine.updateMvMatrix();
-		myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
+		if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
 		curved_rail_int_top.drawShape();
 		curved_rail_ext_top.drawShape();
 

@@ -96,6 +96,9 @@ void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods
 		case GLFW_KEY_V:
 			turn_right = true;
 			break;
+		case GLFW_KEY_R:
+			realist_light = !realist_light;
+			break;
 		}
 	} 
 
@@ -227,7 +230,9 @@ int main(int /*argc*/, char ** /*argv*/)
 		myEngine.setViewMatrix(viewMatrix);
 		myEngine.updateMvMatrix();
 
-		drawScene(grid);
+		drawScene();
+
+		moveTrainAlongPath();
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);

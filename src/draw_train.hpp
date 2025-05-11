@@ -9,6 +9,6 @@
 
 using namespace glbasimac;
 
-void initTrain(int pos_x, int pos_y);
+void initTrain(float pos_x, float pos_y);
 
-void drawTrain(int pos_x, int pos_y);
+void drawTrain(float pos_x, float pos_y, float angle);

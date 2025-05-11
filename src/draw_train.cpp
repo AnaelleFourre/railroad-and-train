@@ -21,7 +21,7 @@ void computeWheelSide(std::vector<float>& points, float r1, float r2) {
 }
 
 
-void initTrain(int pos_x, int pos_y) {
+void initTrain(float pos_x, float pos_y) {
 
     // Wheel side
     std::vector<float> wheelSidePoints;
@@ -62,7 +62,7 @@ void drawClosedCylinder() {
             myEngine.mvMatrixStack.addTranslation(Vector3D(0., 1., 0.));
             myEngine.mvMatrixStack.addRotation(M_PI_2, Vector3D(1., 0., 0.));
             myEngine.updateMvMatrix();
-            myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
+            if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
             disc.drawShape();
         myEngine.mvMatrixStack.popMatrix(); 
         myEngine.updateMvMatrix();
@@ -162,14 +162,14 @@ void drawThickCircle(float r, float h, float w) {
     myEngine.mvMatrixStack.pushMatrix();
         myEngine.mvMatrixStack.addHomothety(Vector3D(r, r, 1.));
         myEngine.mvMatrixStack.pushMatrix();
-            myEngine.setNormalForConvex2DShape(Vector3D(0., 0., -1.));
+            if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(0., 0., -1.));
             myEngine.updateMvMatrix();
             wheelSide.drawShape();
         myEngine.mvMatrixStack.popMatrix();
         myEngine.mvMatrixStack.pushMatrix();
             myEngine.mvMatrixStack.addTranslation(Vector3D(0., 0., w));
             myEngine.updateMvMatrix();
-            myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
+            if (realist_light) myEngine.setNormalForConvex2DShape(Vector3D(0., 0., 1.));
             wheelSide.drawShape();
         myEngine.mvMatrixStack.popMatrix();
     myEngine.mvMatrixStack.popMatrix();
@@ -244,12 +244,12 @@ void drawLight() {
         myEngine.mvMatrixStack.addTranslation(Vector3D(5, 10., 5.5 - sr));
         myEngine.mvMatrixStack.pushMatrix();
             // Switching to flat shading to allow the light to be drawn
-            myEngine.switchToFlatShading(); 
+            if (realist_light) myEngine.switchToFlatShading();
             myEngine.setFlatColor(1., 1., 128. / 255.);
             myEngine.mvMatrixStack.addHomothety(Vector3D(1, 0.5, 1));
             myEngine.updateMvMatrix();
             light->draw();
-            myEngine.switchToPhongShading();
+            if (realist_light) myEngine.switchToPhongShading();
         myEngine.mvMatrixStack.popMatrix();
         myEngine.mvMatrixStack.pushMatrix();
             myEngine.setFlatColor(0., 10. / 255., 10. / 255.);
@@ -260,10 +260,13 @@ void drawLight() {
     myEngine.mvMatrixStack.popMatrix();
 }
 
-void drawTrain(int pos_x, int pos_y){
+void drawTrain(float pos_x, float pos_y, float angle) {
     
     myEngine.mvMatrixStack.pushMatrix();
-        myEngine.mvMatrixStack.addTranslation(Vector3D(10. * pos_x, 10. * pos_y, sr + 2 * rr));
+        myEngine.mvMatrixStack.addTranslation(Vector3D(pos_x, pos_y, sr + 2 * rr));
+        myEngine.mvMatrixStack.addTranslation(Vector3D(5., 5., 0.));
+        myEngine.mvMatrixStack.addRotation(angle, Vector3D(0., 0., 1.));
+        myEngine.mvMatrixStack.addTranslation(Vector3D(-5., -5., 0.));
         drawStructure();
         drawWheels();
         drawCowCatcher();
