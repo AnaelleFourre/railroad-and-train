@@ -100,7 +100,7 @@ void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods
 		case GLFW_KEY_R:
 			realist_light = !realist_light;
 			break;
-		case GLFW_KEY_M:
+		case GLFW_KEY_S:
 			move_train = !move_train;
 			break;
 		}
@@ -138,10 +138,15 @@ void onKey(GLFWwindow *window, int key, int /*scancode*/, int action, int /*mods
 	}
 }
 
-int main(int /*argc*/, char ** /*argv*/)
+int main(int argc, char ** argv)
 {
 
-    std::ifstream i("../grids/grid1.json");
+	if (argc != 2) {
+		std::cerr << "Usage: " << argv[0] << " <grid_file.json>" << std::endl;
+		std::cerr << "Please provide a grid file in the 'grids' directory." << std::endl;
+	}
+
+    std::ifstream i("../grids/" + std::string(argv[1]));
 
     auto j = json::parse(i);
     auto grid = j.template get<Grid>();

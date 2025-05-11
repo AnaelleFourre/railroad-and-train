@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.11)
 cmake_policy(SET CMP0072 NEW)
 
-project(TD_GL_IMAC1)
+project(RAILROAD_AND_TRAIN)
 
 # Set the folder where the executable will be created
 set(OUTPUT_BIN_FOLDER ${CMAKE_SOURCE_DIR}/bin)
